@@ -12,6 +12,7 @@ const WINDOW_HEIGHT = window.innerHeight;
 let camera, scene, renderer;
 
 InitScene();
+AddLight(100, 100, 100);
 AddArcballControls();
 // AddOrbitControls();
 RenderScene();
@@ -22,8 +23,8 @@ function InitScene() {
   camera = new THREE.PerspectiveCamera(
     45,
     WINDOW_WIDTH / WINDOW_HEIGHT,
-    1,
-    1000
+    0.1,
+    500
   );
   camera.position.set(100, 100, 100);
   camera.lookAt(0, 0, 0);
@@ -32,17 +33,19 @@ function InitScene() {
   renderer.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
   document.body.appendChild(renderer.domElement);
 
-  for (let i = 0; i < 100; i++) {
-    AddBox(randInt(-20, 20), randInt(-30, 30), randInt(-40, 40));
-  }
-  for (let i = 0; i < 4; i++) {
-    AddSphere(
-      randFloat(-10, 10),
-      randFloat(-100, 100),
-      randFloat(-100, 100),
-      randFloat(-100, 100)
-    );
-  }
+  AddSphere(0, 0, 0, 20);
+
+  // for (let i = 0; i < 100; i++) {
+  //   AddBox(randInt(-20, 20), randInt(-30, 30), randInt(-40, 40));
+  // }
+  // for (let i = 0; i < 4; i++) {
+  //   AddSphere(
+  //     randFloat(-10, 10),
+  //     randFloat(-100, 100),
+  //     randFloat(-100, 100),
+  //     randFloat(-100, 100)
+  //   );
+  // }
 }
 
 function RenderScene() {
@@ -60,19 +63,28 @@ function AddBox(x, y, z) {
     color: 0xffffff,
     wireframe: true,
   });
+
   let mesh = new THREE.Mesh(box, material);
-  mesh.position.set(x, y, x);
   scene.add(mesh);
 }
 
 function AddSphere(x, y, z, r) {
   let box = new THREE.SphereGeometry(r, 32, 16);
+
   let material = new THREE.MeshBasicMaterial({
     color: 0xffff00,
-    wireframe: true,
+    // wireframe: true,
   });
+
+  // let material = new THREE.MeshPhongMaterial({
+  //   color: 0xdddddd,
+  //   specular: 0x009900,
+  //   shininess: 30,
+  //   flatShading: true,
+  // });
+
   let mesh = new THREE.Mesh(box, material);
-  mesh.position.set(x, y, x);
+  mesh.position.set(x, y, z);
   scene.add(mesh);
 }
 
@@ -90,4 +102,10 @@ function AddOrbitControls() {
   });
 
   console.log("orbit control added");
+}
+
+function AddLight(x, y, z) {
+  // light
+  const light = new THREE.AmbientLight(0x404040); // soft white light
+  scene.add(light);
 }
