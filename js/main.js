@@ -1,9 +1,10 @@
 import * as THREE from "three";
 
+// setting up canvas
 const canvas = document.getElementById("canvas");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-window.addEventListener("resize", ResizeCanvas);
+window.addEventListener("resize", ResizeWindow);
 // renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
 // camera settings
@@ -15,28 +16,37 @@ const camera = new THREE.PerspectiveCamera(fov, aspect_ratio, near, far);
 camera.position.z = 2;
 // scene
 const scene = new THREE.Scene();
+// testure loader
+const textureLoader = new THREE.TextureLoader();
 
-// ex
+// adding objects
+// TODO testing
 const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-// const material = new THREE.MeshBasicMaterial({ color: 0x44aa88 });
-const material = new THREE.MeshPhongMaterial({ color: 0x44aa88 });
-const cube = new THREE.Mesh(geometry, material);
+const material = new THREE.MeshBasicMaterial({
+  color: 0xfffffff,
+  map: textureLoader.load("images/lava_texture.png"),
+});
+const mesh = new THREE.Mesh(geometry, material);
+scene.add(mesh);
+// CreateTexturedObject(0, 0, 0, "images/lava_texture.png");
 
-scene.add(cube);
+// lighting
 AddDirectionalLight(-1, 2, 4, 1, 0xffffff);
-
+// rendering
 Render();
 
-function ResizeCanvas() {
-  console.log("window resized");
+function ResizeWindow() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+  camera.aspect = canvas.width / canvas.height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(canvas.width, canvas.height);
 }
 
 function Render(time) {
-  time *= 0.001;
-  cube.rotation.x = time * 0.1;
-  cube.rotation.y = time * 0.1;
+  mesh.rotation.set(0, time * 0.001, 0);
+  renderer.clearColor();
+  renderer.clearDepth();
   renderer.render(scene, camera);
   requestAnimationFrame(Render);
 }
@@ -45,4 +55,15 @@ function AddDirectionalLight(x, y, z, intencity, color) {
   const light = new THREE.DirectionalLight(color, intencity);
   light.position.set(x, y, z);
   scene.add(light);
+}
+
+function CreateTexturedObject(x, y, z, filepath) {
+  const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xfffffff,
+    map: textureLoader.load(filepath),
+  });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.set(x, y, z);
+  scene.add(mesh);
 }

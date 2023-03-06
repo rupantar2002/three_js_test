@@ -13,6 +13,6 @@ npm run dev
 
 ---
 
-![alt](images/Screenshot%202023-03-05%20131423.png)
+![alt](images/image.png)
 
 #### code output
